@@ -16,32 +16,32 @@ def run_scraper():
     wait = WebDriverWait(driver, 15)
 
     try:
-        print("🌐 Opening BookMyShow Hyderabad...")
+        print("🌐 Opening BookMyShow Hyderabad...", flush=True)
         driver.get("https://in.bookmyshow.com/explore/movies-hyderabad")
 
         # Wait for search box
-        print("🔍 Waiting for search box...")
+        print("🔍 Waiting for search box...", flush=True)
         search_box = wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, "input[placeholder*='Search']")
         ))
         search_box.send_keys("Mahavathar")
 
         # Wait for search results
-        print("🔎 Looking for Mahavathar in search results...")
+        print("🔎 Looking for Mahavathar in search results...", flush=True)
         movie_link = wait.until(EC.element_to_be_clickable(
             (By.CSS_SELECTOR, "ul.search-list li a")
         ))
         movie_link.click()
 
         # Wait for showtime button
-        print("🎬 Waiting for showtime button...")
+        print("🎬 Waiting for showtime button...", flush=True)
         showtime_button = wait.until(EC.element_to_be_clickable(
             (By.CSS_SELECTOR, "a.showtime-pill")
         ))
         showtime_button.click()
 
         # Wait for seat map to load
-        print("🪑 Extracting seat and pricing info...")
+        print("🪑 Extracting seat and pricing info...", flush=True)
         wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, "div.legend-item")
         ))
@@ -91,10 +91,10 @@ def run_scraper():
         }
 
         insert_collection(data)
-        print(f"✅ Inserted with dynamic pricing: ₹{estimated_collection}")
+        print(f"✅ Inserted with dynamic pricing: ₹{estimated_collection}", flush=True)
 
     except Exception as e:
-        print(f"❌ Scraper failed: {e}")
+        print(f"❌ Scraper failed: {e}", flush=True)
 
     finally:
         driver.quit()
