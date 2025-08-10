@@ -21,9 +21,8 @@ def run_scraper():
 
         # Wait for search box
         print("🔍 Waiting for search box...", flush=True)
-        search_box = wait.until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "input[placeholder*='Search']")
-        ))
+        search_box = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='text']")))
+
         search_box.send_keys("Mahavathar")
 
         # Wait for search results
