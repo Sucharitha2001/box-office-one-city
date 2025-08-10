@@ -1,0 +1,8 @@
+flask
+streamlit
+pandas
+requests
+beautifulsoup4
+streamlit-authenticator
+selenium
+webdriver-manager
