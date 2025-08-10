@@ -13,37 +13,43 @@ def run_scraper():
     options.add_argument("--no-sandbox")
 
     driver = webdriver.Chrome(options=options)
-    wait = WebDriverWait(driver, 15)
+    wait = WebDriverWait(driver, 20)
 
     try:
-        print("🌐 Opening BookMyShow Hyderabad...", flush=True)
-        driver.get("https://in.bookmyshow.com/explore/movies-hyderabad")
+        print("🌐 Opening Mahavathar page directly...", flush=True)
+        driver.get("https://in.bookmyshow.com/buytickets/mahavatar-narsimha-hyderabad/movie-hyd-ET00454563-MT")
 
-        # Wait for search box
-        print("🔍 Waiting for search box...", flush=True)
-        search_box = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='text']")))
+        # Wait for venue list
+        print("🎭 Waiting for venues and showtimes...", flush=True)
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, ".__venue-name")))
 
-        search_box.send_keys("Mahavathar")
+        # Find PVR Inorbit and click 7:30 PM showtime
+        venues = driver.find_elements(By.CSS_SELECTOR, ".__venue-name")
+        target_venue = None
+        for venue in venues:
+            if "PVR Inorbit" in venue.text:
+                target_venue = venue
+                break
 
-        # Wait for search results
-        print("🔎 Looking for Mahavathar in search results...", flush=True)
-        movie_link = wait.until(EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "ul.search-list li a")
-        ))
-        movie_link.click()
+        if not target_venue:
+            raise Exception("PVR Inorbit not found")
 
-        # Wait for showtime button
-        print("🎬 Waiting for showtime button...", flush=True)
-        showtime_button = wait.until(EC.element_to_be_clickable(
-            (By.CSS_SELECTOR, "a.showtime-pill")
-        ))
-        showtime_button.click()
+        parent = target_venue.find_element(By.XPATH, "./ancestor::div[contains(@class, '__venue-container')]")
+        showtimes = parent.find_elements(By.CSS_SELECTOR, "a.showtime-pill")
 
-        # Wait for seat map to load
+        showtime_clicked = False
+        for show in showtimes:
+            if "7:30 PM" in show.text:
+                show.click()
+                showtime_clicked = True
+                break
+
+        if not showtime_clicked:
+            raise Exception("7:30 PM showtime not found")
+
+        # Wait for seat map
         print("🪑 Extracting seat and pricing info...", flush=True)
-        wait.until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "div.legend-item")
-        ))
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.legend-item")))
 
         # Extract ticket prices
         legend_items = driver.find_elements(By.CSS_SELECTOR, "div.legend-item")
