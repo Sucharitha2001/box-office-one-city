@@ -4,6 +4,7 @@ import json
 from database import init_db
 from scraper import run_scraper
 import threading
+import os
 
 app = Flask(__name__)
 init_db()
@@ -43,5 +44,5 @@ def scrape():
     return jsonify({"status": "Scraping started"}), 202
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use Render's assigned port
+    port = int(os.environ.get('PORT', 5000))  
     app.run(host='0.0.0.0', port=port, debug=True)
